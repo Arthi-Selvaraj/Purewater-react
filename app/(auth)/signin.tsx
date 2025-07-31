@@ -1,5 +1,5 @@
-import { useFonts } from 'expo-font';
-import { useRouter } from 'expo-router';
+// app/(auth)/signin.tsx
+
 import React, { useState } from 'react';
 import {
   Alert,
@@ -10,11 +10,16 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useFonts } from 'expo-font';
+import { useRouter } from 'expo-router';
 import { Checkbox } from 'react-native-paper';
+
+import { customFonts, fontFamily } from '../../utils/fonts';
+import CustomInput from '../../components/CustomInput';
+import PasswordInput from '../../components/PasswordInput';
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,13 +28,8 @@ export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // 👈 New state for eye toggle
 
-  const [fontsLoaded] = useFonts({
-    Poppins: require('../../assets/fonts/Poppins-Regular.ttf'),
-    PoppinsBold: require('../../assets/fonts/Poppins-Bold.ttf'),
-  });
-
+  const [fontsLoaded] = useFonts(customFonts);
   if (!fontsLoaded) return null;
 
   const validateAndLogin = () => {
@@ -66,36 +66,18 @@ export default function Signin() {
 
         <Text style={styles.loginTitle}>Login</Text>
 
-        <Text style={styles.label}>Phone Number or Email Id</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="username"
-          placeholderTextColor="#999"
+        <CustomInput
+          label="Phone Number or Email Id"
           value={email}
           onChangeText={setEmail}
-          autoCapitalize="none"
+          placeholder="username"
         />
 
-        <Text style={styles.label}>Password</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="xxxxxxxxxxx"
-            placeholderTextColor="#999"
-            secureTextEntry={!showPassword} 
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPassword(prev => !prev)}
-            style={styles.eyeIcon}
-          >
-            <Image
-              source={require('../../assets/icons/eye.png')}
-              style={{ width: 24, height: 24 }}
-            />
-          </TouchableOpacity>
-        </View>
+        <PasswordInput
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+        />
 
         <View style={styles.row}>
           <View style={styles.rememberRow}>
@@ -154,8 +136,7 @@ const styles = StyleSheet.create({
   },
   welcome: {
     fontSize: 18,
-    fontFamily: 'Poppinsbold',
-    fontWeight: 700,
+    fontFamily: fontFamily.regular,
     textAlign: 'center',
     color: '#000',
     marginTop: 20,
@@ -169,36 +150,11 @@ const styles = StyleSheet.create({
   },
   loginTitle: {
     fontSize: 24,
-    fontFamily: 'Poppinsbold',
+    fontFamily: fontFamily.regular,
     color: '#007BFF',
-    fontWeight:700,
     marginTop: 10,
     marginBottom: 20,
     letterSpacing: 0.3,
-  },
-  label: {
-    fontFamily: 'Poppins',
-    fontWeight:700,
-    marginBottom: 6,
-    color: '#000',
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    paddingHorizontal: 16,
-    marginBottom: 15,
-    backgroundColor: '#fff',
-    fontFamily: 'Poppins',
-    color: '#000', // 👈 Ensures black text
-  },
-  passwordContainer: {
-    position: 'relative',
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 16,
-    top: 12,
   },
   row: {
     flexDirection: 'row',
@@ -213,12 +169,12 @@ const styles = StyleSheet.create({
   rememberText: {
     fontSize: 14,
     color: '#000',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   forgot: {
     fontSize: 14,
     color: '#007BFF',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
     textDecorationLine: 'underline',
   },
   loginBtn: {
@@ -229,7 +185,7 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: '#fff',
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
     fontSize: 16,
   },
   divider: {
@@ -245,7 +201,7 @@ const styles = StyleSheet.create({
   or: {
     marginHorizontal: 10,
     color: '#666',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   socialRow: {
     flexDirection: 'row',
@@ -262,11 +218,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
     fontSize: 14,
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   signUpText: {
     color: '#007BFF',
-    fontFamily: 'Poppins',
-     textDecorationLine: 'underline',
+    fontFamily: fontFamily.regular,
+    textDecorationLine: 'underline',
   },
 });

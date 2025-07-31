@@ -1,38 +1,27 @@
+
+
 import React from 'react';
-import { Dimensions } from 'react-native';
-import { useFonts } from 'expo-font';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ImageBackground,
-} from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useFonts } from 'expo-font';
+import { customFonts, fontFamily } from '../../utils/fonts';
 
 const { width, height } = Dimensions.get('window');
 
 export default function AddLocation() {
-  const [fontsLoaded] = useFonts({
-    Poppins: require('../../assets/fonts/Poppins-Regular.ttf'),
-    PoppinsBold: require('../../assets/fonts/Poppins-Bold.ttf'),
-  });
-
+  const [fontsLoaded] = useFonts(customFonts);
   const router = useRouter();
+
+  if (!fontsLoaded) return null;
 
   const handleLocation = () => {
     router.push('/(auth)/select-location');
   };
 
   const handleBack = () => {
-    router.back(); // this will work because _layout.js sets up a Stack
+    router.back();
   };
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <ImageBackground
@@ -94,7 +83,7 @@ const styles = StyleSheet.create({
   },
   mainImage: {
     width,
-    height: height * 0.60,
+    height: height * 0.6,
   },
   curveImage: {
     width: width * 0.95,
@@ -110,24 +99,19 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.bold,
     color: '#000',
     marginBottom: 10,
-    textAlign: 'left',
-    letterSpacing: 0.6, // or 1 for more gap
-
-    
+    letterSpacing: 0.5,
   },
   highlight: {
     color: '#007BFF',
   },
   subtitle: {
     fontSize: 13,
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
     color: '#333',
     marginBottom: 30,
-    textAlign: 'left',
   },
   button: {
     marginTop: 80,
@@ -137,6 +121,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
 });

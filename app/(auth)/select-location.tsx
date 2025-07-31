@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useFonts } from 'expo-font';
 import {
   View,
   Text,
@@ -11,35 +10,22 @@ import {
   Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useFonts } from 'expo-font';
+import { customFonts } from '../../utils/fonts'; 
+import { LOCATIONS } from '../../constants/locations'; 
 
 const { width } = Dimensions.get('window');
-
-const CITIES = [
-  'Ahmedabad',
-  'Bangalore',
-  'Bhubaneswar',
-  'Chennai',
-  'Coimbatore',
-  'Delhi',
-  'Gurgaon',
-  'Hyderabad',
-  'Jaipur',
-  'Kochi',
-  'Kolkata',
-];
 
 export default function SelectLocation() {
   const router = useRouter();
   const [searchText, setSearchText] = useState('');
-  const [fontsLoaded] = useFonts({
-    Poppins: require('../../assets/fonts/Poppins-Regular.ttf'),
-    PoppinsBold: require('../../assets/fonts/Poppins-Bold.ttf'),
-  });
+
+  const [fontsLoaded] = useFonts(customFonts); 
 
   if (!fontsLoaded) return null;
 
-  const filteredCities = CITIES.filter(city =>
-    city.toLowerCase().startsWith(searchText.toLowerCase())
+  const filteredCities = LOCATIONS.filter(city =>
+    city.name.toLowerCase().startsWith(searchText.toLowerCase())
   );
 
   const handleSelect = (city: string) => {
@@ -50,11 +36,12 @@ export default function SelectLocation() {
     <View style={styles.container}>
       <View style={styles.topbox}>
         <TouchableOpacity onPress={() => router.back()}>
-                    <Image
-                      source={require('../../assets/icons/back-icon.png')} // Replace with your back icon
-                      style={styles.icon}
-                    />
-                  </TouchableOpacity>
+          <Image
+            source={require('../../assets/icons/back-icon.png')}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+
         <Text style={styles.header}>Location</Text>
 
         <View style={styles.searchContainer}>
@@ -74,10 +61,10 @@ export default function SelectLocation() {
 
       <FlatList
         data={filteredCities}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.cityItem} onPress={() => handleSelect(item)}>
-            <Text style={styles.cityText}>{item}</Text>
+          <TouchableOpacity style={styles.cityItem} onPress={() => handleSelect(item.name)}>
+            <Text style={styles.cityText}>{item.name}</Text>
           </TouchableOpacity>
         )}
         keyboardShouldPersistTaps="handled"
@@ -101,8 +88,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f4faff',
-    
-    
   },
   topbox: {
     backgroundColor: '#fff',
@@ -119,12 +104,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     color: '#222',
-    marginBottom: 20,        // you can reduce this if needed
-  marginTop: -22,
-  fontFamily:'Poppins',
-
+    marginBottom: 20,
+    marginTop: -22,
+    fontFamily: 'Poppins',
   },
-
   icon: {
     width: 24,
     height: 24,
@@ -136,12 +119,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#eaf5ff',
     paddingHorizontal: 12,
     height: 47,
-    //borderRadius: 8,
   },
   searchInput: {
     flex: 1,
     fontSize: 14,
     color: '#000',
+    fontFamily: 'Poppins',
   },
   searchIcon: {
     width: 18,
@@ -152,7 +135,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#e3e3e3',
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
   },
   cityText: {
     fontSize: 16,
@@ -166,15 +149,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 14,
-    width:300,
+    width: 300,
     marginTop: 20,
     marginBottom: 30,
-    marginLeft:30,
+    marginLeft: 30,
   },
   useCurrentText: {
     color: '#fff',
     fontSize: 16,
     marginLeft: 8,
+    fontFamily: 'Poppins',
   },
   currentIcon: {
     width: 18,

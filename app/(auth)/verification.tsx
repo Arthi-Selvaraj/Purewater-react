@@ -10,22 +10,20 @@ import {
   ImageBackground,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { customFonts } from '../../utils/fonts'; // ✅ Added this line
 
 export default function Verification() {
   const [otp, setOtp] = useState('');
-  const [timer, setTimer] = useState(150); // 2 min 30 sec
+  const [timer, setTimer] = useState(150);
   const router = useRouter();
 
-    const [fontsLoaded] = useFonts({
-        Poppins: require('../../assets/fonts/Poppins-Regular.ttf'),
-        PoppinsBold: require('../../assets/fonts/Poppins-Bold.ttf'),
-      });
-    
-      if (!fontsLoaded) return null;
+  const [fontsLoaded] = useFonts(customFonts); // ✅ Using customFonts hook
+
+  if (!fontsLoaded) return null;
 
   useEffect(() => {
     if (timer > 0) {
-      const interval = setInterval(() => setTimer(prev => prev - 1), 1000);
+      const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
       return () => clearInterval(interval);
     }
   }, [timer]);
@@ -74,8 +72,7 @@ export default function Verification() {
         />
 
         <Text style={styles.resend}>
-          Don’t receive the OTP?{' '}
-          <Text style={styles.blue}>Resend</Text>
+          Don’t receive the OTP? <Text style={styles.blue}>Resend</Text>
         </Text>
 
         <TouchableOpacity style={styles.button} onPress={handleContinue}>
@@ -110,7 +107,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     alignSelf: 'flex-start',
     fontFamily: 'Poppins',
-    letterSpacing: 0.6
+    letterSpacing: 0.6,
   },
   blue: {
     color: '#007BFF',
@@ -128,13 +125,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#007BFF',
-    marginTop:30,
+    marginTop: 30,
     fontFamily: 'Poppins',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    //borderRadius: 6,
     width: '100%',
     height: 50,
     paddingHorizontal: 16,
@@ -144,12 +140,10 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   resend: {
-    
     marginBottom: 10,
     color: '#444',
     fontSize: 14,
     fontFamily: 'Poppins',
-    //textDecorationLine:'underline',
   },
   button: {
     backgroundColor: '#007BFF',
@@ -157,11 +151,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     width: '100%',
     alignItems: 'center',
-    
   },
   buttonText: {
     color: '#fff',
-    //fontWeight: 'bold',
     fontSize: 16,
     fontFamily: 'Poppins',
   },

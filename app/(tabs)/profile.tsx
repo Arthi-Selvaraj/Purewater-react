@@ -1,146 +1,74 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { Ionicons, Feather, FontAwesome, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, Feather, FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useFonts } from 'expo-font';
 
-interface MenuItem {
-  icon: string;
-  iconType: 'Ionicons' | 'Feather' | 'FontAwesome';
-  text: string;
-  route?: string;
-}
+// Import utilities and constants
+import { customFonts, fontFamily } from '../../utils/fonts';
+import { PROFILE_DATA, MENU_ITEMS, PROFILE_ICONS, PROFILE_COLORS, MenuItem } from '../../constants/profile';
 
 export default function ProfileScreen() {
-   const [fontsLoaded] = useFonts({
-        Poppins: require('../../assets/fonts/Poppins-Regular.ttf'),
-        PoppinsBold: require('../../assets/fonts/Poppins-Bold.ttf'),
-      });
-    
-      if (!fontsLoaded) return null;
+  const [fontsLoaded] = useFonts(customFonts);
+  
+  if (!fontsLoaded) return null;
       
   const router = useRouter();
 
-  const menuItems: MenuItem[] = [
-    { 
-      icon: 'receipt-outline', 
-      iconType: 'Ionicons',
-      text: 'All Orders', 
-      route: '/(screen)/myOrders' 
-    },
-    { 
-      icon: 'receipt-outline', 
-      iconType: 'Ionicons',
-      text: 'Subscriptions' 
-    },
-    { 
-      icon: 'people-outline', 
-      iconType: 'Ionicons',
-      text: 'Addresses' 
-    },
-    { 
-      icon: 'card-outline', 
-      iconType: 'Ionicons',
-      text: 'Payment Methods' 
-    },
-    { 
-      icon: 'notifications-outline', 
-      iconType: 'Ionicons',
-      text: 'Notifications' 
-    },
-    { 
-      icon: 'globe-outline', 
-      iconType: 'Ionicons',
-      text: 'Language' 
-    },
-    { 
-      icon: 'headphones', 
-      iconType: 'Feather',
-      text: 'Help & Support' 
-    },
-    { 
-      icon: 'settings-outline', 
-      iconType: 'Ionicons',
-      text: 'Settings' 
-    },
-    { 
-      icon: 'key-outline', 
-      iconType: 'Ionicons',
-      text: 'Change Password' 
-    },
-    { 
-      icon: 'document-text-outline', 
-      iconType: 'Ionicons',
-      text: 'Terms & Privacy Policy' 
-    },
-    { 
-      icon: 'log-out-outline', 
-      iconType: 'Ionicons',
-      text: 'Logout' 
-    },
-  ];
-
   const renderIcon = (item: MenuItem) => {
-    if (item.iconType === 'Ionicons') {
-      return (
-        <Ionicons 
-          name={item.icon as any} 
-          size={20} 
-          style={styles.itemIcon} 
-        />
-      );
-    } else if (item.iconType === 'Feather') {
-      return (
-        <Feather 
-          name={item.icon as any} 
-          size={20} 
-          style={styles.itemIcon} 
-        />
-      );
-    } else {
-      return (
-        <FontAwesome 
-          name={item.icon as any} 
-          size={20} 
-          style={styles.itemIcon} 
-        />
-      );
+    const iconProps = {
+      size: 20,
+      style: styles.itemIcon,
+    };
+
+    switch (item.iconType) {
+      case 'Ionicons':
+        return <Ionicons name={item.icon as any} {...iconProps} />;
+      case 'Feather':
+        return <Feather name={item.icon as any} {...iconProps} />;
+      case 'FontAwesome':
+        return <FontAwesome name={item.icon as any} {...iconProps} />;
+      default:
+        return <Ionicons name={item.icon as any} {...iconProps} />;
     }
+  };
+
+  const handleMenuItemPress = (item: MenuItem) => {
+    if (item.route) {
+      router.push(item.route as any);
+    }
+    // Add other menu item actions here
   };
 
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-       <TouchableOpacity onPress={() => router.push('/(tabs)/profile')}>
-                 <Image source={require('../../assets/icons/back-icon.png')} style={styles.icon} />
-               </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/(tabs)/profile')}>
+          <Image source={PROFILE_ICONS.back} style={styles.icon} />
+        </TouchableOpacity>
         <Text style={styles.title}>Profile</Text>
       </View>
 
       {/* Profile Info */}
       <View style={styles.profileSection}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>DW</Text>
+          <Text style={styles.avatarText}>{PROFILE_DATA.user.initials}</Text>
         </View>
         
         <View style={styles.userInfo}>
-          <Text style={styles.name}>David Wilson</Text>
-          <Text style={styles.email}>davidwilson123@gmail.com</Text>
+          <Text style={styles.name}>{PROFILE_DATA.user.name}</Text>
+          <Text style={styles.email}>{PROFILE_DATA.user.email}</Text>
         </View>
         <Feather name="edit" size={17} style={styles.editIcon} />
       </View>
 
       {/* Options List */}
-      {menuItems.map((item, index) => (
+      {MENU_ITEMS.map((item, index) => (
         <TouchableOpacity
           style={styles.item}
           key={index}
-          onPress={() => {
-            if (item.route) {
-             router.push('/(screen)/myOrders');
-            }
-          }}
+          onPress={() => handleMenuItemPress(item)}
         >
           {renderIcon(item)}
           <Text style={styles.itemText}>{item.text}</Text>
@@ -153,7 +81,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FBFC',
+    backgroundColor: PROFILE_COLORS.background,
     paddingHorizontal: 16,
   },
   header: {
@@ -170,12 +98,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center',
-     fontFamily: 'PoppinsBold',
-     marginRight: 230,
-     marginTop: -4
+    fontFamily: fontFamily.bold,
+    marginRight: 230,
+    marginTop: -4,
+    color: PROFILE_COLORS.textPrimary,
   },
   editIcon: {
-    color: '#333',
+    color: PROFILE_COLORS.textPrimary,
     marginLeft: 30,
     marginBottom: 30,
   },
@@ -183,14 +112,14 @@ const styles = StyleSheet.create({
     marginTop: 24,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0F6FB',
+    backgroundColor: PROFILE_COLORS.profileBackground,
     padding: 16,
     marginHorizontal: -16,
     marginLeft: -16,
     marginRight: -16,
   },
   avatar: {
-    backgroundColor: '#CFE7FF',
+    backgroundColor: PROFILE_COLORS.avatarBackground,
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -201,8 +130,8 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#339CFF',
-     fontFamily: 'Poppins',
+    color: PROFILE_COLORS.avatarText,
+    fontFamily: fontFamily.regular,
   },
   userInfo: {
     marginLeft: 16,
@@ -211,30 +140,31 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: 'bold',
     fontSize: 16,
-     fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
+    color: PROFILE_COLORS.textPrimary,
   },
   email: {
-    color: '#666',
+    color: PROFILE_COLORS.textSecondary,
     fontSize: 14,
     marginTop: 4,
-     fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   item: {
     flexDirection: 'row',
     paddingVertical: 16,
     alignItems: 'center',
     borderBottomWidth: 0.5,
-    borderColor: '#ddd',
+    borderColor: PROFILE_COLORS.border,
     paddingHorizontal: 20,
   },
   itemIcon: {
     width: 26,
-    color: '#666',
+    color: PROFILE_COLORS.textSecondary,
     marginRight: 16,
   },
   itemText: {
     fontSize: 15,
-    color: '#000',
-     fontFamily: 'Poppins',
+    color: PROFILE_COLORS.textPrimary,
+    fontFamily: fontFamily.regular,
   },
 });

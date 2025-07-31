@@ -15,39 +15,20 @@ import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 
+// Import utilities and constants
+import { customFonts, fontFamily } from '../../utils/fonts';
+import { CART_CONFIG, INITIAL_CART_ITEMS, AVAILABLE_PRODUCTS, CART_ICONS } from '../../constants/cart';
+
 const { width } = Dimensions.get('window');
-const SWIPE_THRESHOLD = -80; // Minimum swipe distance to reveal delete
 
 export default function Cart() {
-   const [fontsLoaded] = useFonts({
-        Poppins: require('../../assets/fonts/Poppins-Regular.ttf'),
-        PoppinsBold: require('../../assets/fonts/Poppins-Bold.ttf'),
-      });
-    
-      if (!fontsLoaded) return null;
+  const [fontsLoaded] = useFonts(customFonts);
+  
+  if (!fontsLoaded) return null;
       
   const router = useRouter();
   const [quantities, setQuantities] = useState([1, 1, 1]);
-  const [cartItems, setCartItems] = useState([
-    {
-      name: '20L Water Can Packed drinking water',
-      subtitle: '20 Litre (x4)',
-      image: require('../../assets/images/can1.png'),
-      price: 160,
-    },
-    {
-      name: '1L Water Bottle Packed drinking water',
-      subtitle: '1 Litre (x2)',
-      image: require('../../assets/images/can2.png'),
-      price: 160,
-    },
-    {
-      name: '500ml Water Bottle Packed drinking water',
-      subtitle: '500ml (x1)',
-      image: require('../../assets/images/can3.png'),
-      price: 160,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState(INITIAL_CART_ITEMS);
 
   // Animation values for each cart item
   const [panAnimations] = useState(
@@ -82,7 +63,6 @@ export default function Cart() {
           onPress: () => {
             const updatedCartItems = cartItems.filter((_, i) => i !== index);
             const updatedQuantities = quantities.filter((_, i) => i !== index);
-            const updatedAnimations = panAnimations.filter((_, i) => i !== index);
             
             setCartItems(updatedCartItems);
             setQuantities(updatedQuantities);
@@ -96,23 +76,23 @@ export default function Cart() {
   const handlePanGesture = (index: number) => (event: any) => {
     const { translationX } = event.nativeEvent;
     
-    // Only allow left swipe (negative values)
+    
     if (translationX <= 0) {
-      panAnimations[index].setValue(Math.max(translationX, SWIPE_THRESHOLD));
+      panAnimations[index].setValue(Math.max(translationX, CART_CONFIG.SWIPE_THRESHOLD));
     }
   };
 
   const handlePanEnd = (index: number) => (event: any) => {
     const { translationX } = event.nativeEvent;
     
-    if (translationX < SWIPE_THRESHOLD / 2) {
-      // Show delete button
+    if (translationX < CART_CONFIG.SWIPE_THRESHOLD / 2) {
+     
       Animated.spring(panAnimations[index], {
-        toValue: SWIPE_THRESHOLD,
+        toValue: CART_CONFIG.SWIPE_THRESHOLD,
         useNativeDriver: true,
       }).start();
     } else {
-      // Hide delete button
+     
       Animated.spring(panAnimations[index], {
         toValue: 0,
         useNativeDriver: true,
@@ -122,11 +102,6 @@ export default function Cart() {
 
   const total = quantities.reduce((acc, q, i) => acc + q * cartItems[i].price, 0);
 
-  const availableProducts = [
-    { name: '20L Water Can', image: require('../../assets/images/prod1.png'), price: '399' },
-    { name: '1L Water Bottle', image: require('../../assets/images/prod2.png'), price: '80' },
-  ];
-
   const SwipeableCartItem = ({ item, index }: { item: any, index: number }) => (
     <View style={styles.swipeContainer}>
       {/* Delete button background */}
@@ -135,7 +110,7 @@ export default function Cart() {
           style={styles.deleteButton} 
           onPress={() => deleteItem(index)}
         >
-          <Image source={require('../../assets/icons/delete-icon.png')} style={styles.deleteIcon} />
+          <Image source={CART_ICONS.delete} style={styles.deleteIcon} />
         </TouchableOpacity>
       </View>
 
@@ -163,15 +138,15 @@ export default function Cart() {
           <View style={styles.qtyBox}>
             <View style={styles.qtyControl}>
               <TouchableOpacity onPress={() => updateQuantity(index, -1)}>
-                <Image source={require('../../assets/icons/minus-icon.png')} style={styles.qtyIcon} />
+                <Image source={CART_ICONS.minus} style={styles.qtyIcon} />
               </TouchableOpacity>
               <Text style={styles.qtyText}>{quantities[index]}</Text>
               <TouchableOpacity onPress={() => updateQuantity(index, 1)}>
-                <Image source={require('../../assets/icons/plus-icon.png')} style={styles.qtyIcon} />
+                <Image source={CART_ICONS.plus} style={styles.qtyIcon} />
               </TouchableOpacity>
             </View>
             <View style={styles.itemPrice}>
-              <Image source={require('../../assets/icons/rupees-icon.png')} style={styles.rupeeIcon} />
+              <Image source={CART_ICONS.rupees} style={styles.rupeeIcon} />
               <Text style={styles.priceText}>{item.price}</Text>
             </View>
           </View>
@@ -185,7 +160,7 @@ export default function Cart() {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()}>
-            <Image source={require('../../assets/icons/back-icon.png')} style={styles.icon} />
+            <Image source={CART_ICONS.back} style={styles.icon} />
           </TouchableOpacity>
           <Text style={styles.headerText}>Cart</Text>
           <TouchableOpacity style={styles.addMoreBtn} onPress={() => router.push('/(tabs)/product')}>
@@ -203,7 +178,7 @@ export default function Cart() {
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total Amount:</Text>
             <View style={styles.totalAmountBox}>
-              <Image source={require('../../assets/icons/rupees-icon.png')} style={styles.rupeeIcon} />
+              <Image source={CART_ICONS.rupees} style={styles.rupeeIcon} />
               <Text style={styles.totalAmount}>{total.toFixed(2)}</Text>
             </View>
           </View>
@@ -217,14 +192,14 @@ export default function Cart() {
           </View>
 
           <View style={styles.productsContainer}>
-            {availableProducts.map((item, index) => (
+            {AVAILABLE_PRODUCTS.map((item, index) => (
               <View key={index} style={styles.card}>
                 <View style={styles.cardHeader}>
                   <View style={styles.ratingContainer}>
-                    <Image source={require('../../assets/icons/star-icon.png')} style={styles.iconStar} />
+                    <Image source={CART_ICONS.star} style={styles.iconStar} />
                     <Text style={styles.rating}>4.8</Text>
                   </View>
-                  <Image source={require('../../assets/icons/save-icon.png')} style={styles.iconSave} />
+                  <Image source={CART_ICONS.save} style={styles.iconSave} />
                 </View>
                 <Image source={item.image} style={styles.productImage} />
                 <View style={styles.newbox}>
@@ -236,11 +211,11 @@ export default function Cart() {
                     style={styles.cartButton}
                     onPress={() => router.push('/(tabs)/cart')}
                   >
-                    <Image source={require('../../assets/icons/cart-icon.png')} style={styles.iconCart} />
+                    <Image source={CART_ICONS.cart} style={styles.iconCart} />
                   </TouchableOpacity>
                 </View>
                 <Text style={styles.productPrice}>
-                  <Image source={require('../../assets/icons/rupees-icon.png')} style={styles.rupeeIcon} />
+                  <Image source={CART_ICONS.rupees} style={styles.rupeeIcon} />
                   {item.price} <Text style={styles.perCase}>Per case</Text>
                 </Text>
                 <TouchableOpacity style={styles.buyNowBtn} onPress={() => router.push('/(screen)/description')}>
@@ -292,7 +267,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: '700',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.bold,
   },
   addMoreBtn: {
     backgroundColor: '#007BFF',
@@ -303,14 +278,15 @@ const styles = StyleSheet.create({
   addMoreText: {
     color: '#fff',
     fontWeight: '500',
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
   },
   itemCount: {
     paddingHorizontal: 16,
     color: '#777',
     marginBottom: 8,
+    fontFamily: fontFamily.regular,
   },
-  // Swipe container styles
+  
   swipeContainer: {
     position: 'relative',
     marginVertical: 6,
@@ -365,16 +341,18 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontWeight: '600',
     fontSize: 14,
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   itemSubtitle: {
     fontSize: 12,
     color: '#888',
     marginBottom: 2,
+    fontFamily: fontFamily.regular,
   },
   viewDetails: {
     color: '#007BFF',
     fontSize: 13,
+    fontFamily: fontFamily.regular,
   },
   qtyBox: {
     alignItems: 'center',
@@ -398,7 +376,7 @@ const styles = StyleSheet.create({
   qtyText: {
     fontSize: 14,
     paddingHorizontal: 8,
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   itemPrice: {
     flexDirection: 'row',
@@ -413,7 +391,7 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 14,
     fontWeight: '500',
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
   },
   totalRow: {
     paddingHorizontal: 16,
@@ -428,6 +406,7 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: fontFamily.regular,
   },
   totalAmountBox: {
     flexDirection: 'row',
@@ -436,21 +415,21 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 18,
     fontWeight: '600',
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
   },
   includingTax: {
     textAlign: 'right',
     paddingHorizontal: 16,
     fontSize: 12,
     color: '#888',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
     marginTop: 40,
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -465,9 +444,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginTop: 30,
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
   },
-  // Optimized products container
+  
   productsContainer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -475,7 +454,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   card: {
-    width: (width - 48) / 2, // Perfect two card layout with proper spacing
+    width: (width - 48) / 2, 
     padding: 2,
     marginBottom: 16,
   },
@@ -494,20 +473,19 @@ const styles = StyleSheet.create({
     color: '#333',
     marginLeft: 4,
     fontWeight: '500',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
-  // Enhanced icon styles
   iconStar: {
     width: 22,
     height: 22,
     resizeMode: 'contain',
-      color: '#333',
+    color: '#333',
   },
   iconSave: {
     width: 18,
     height: 18,
     resizeMode: 'contain',
-    tintColor: '#000', // Light save icon like product screen
+    tintColor: '#000',
   },
   iconCart: {
     width: 30,
@@ -530,26 +508,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#333',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
     lineHeight: 18,
   },
   caseSubText: {
     fontSize: 10,
     color: '#666',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
     marginTop: 2,
   },
   productPrice: {
     color: '#000',
     fontWeight: 'bold',
     fontSize: 16,
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
     marginBottom: 4,
   },
   perCase: {
     fontSize: 11,
     color: '#888',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
     fontWeight: '400',
   },
   cartButton: {
@@ -571,7 +549,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: '600',
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
   },
   footer: {
     position: 'absolute',
@@ -590,17 +568,17 @@ const styles = StyleSheet.create({
   footerTotalLabel: {
     fontSize: 14,
     fontWeight: '600',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   footerTotal: {
     fontSize: 18,
     fontWeight: '700',
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
   },
   footerTaxNote: {
     fontSize: 12,
     color: '#888',
-    fontFamily: 'Poppins',
+    fontFamily: fontFamily.regular,
   },
   orderBtn: {
     backgroundColor: '#007BFF',
@@ -612,6 +590,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
-    fontFamily: 'PoppinsBold',
+    fontFamily: fontFamily.bold,
   },
 });

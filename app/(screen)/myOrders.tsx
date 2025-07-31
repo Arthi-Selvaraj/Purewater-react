@@ -29,7 +29,6 @@ export default function MyOrders() {
   
   const router = useRouter();
 
-  /* ---------- dummy order data ---------- */
   const orderItems = [
     {
       id: 1,
@@ -152,19 +151,19 @@ export default function MyOrders() {
   );
 }
 
-/* ---------------------------- styles ---------------------------- */
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff', padding: 16 },
 
   header: { 
     fontFamily: 'Poppins', 
     fontSize: 20, 
-    fontWeight: '500', // Reduced from default bold
+    fontWeight: '500', 
     marginBottom: 10 
   },
   subHeader: { fontFamily: 'Poppins', color: '#555', marginBottom: 16 },
 
-  /* order card */
+
   card: {
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: '#fff', borderRadius: 10, paddingHorizontal: 7, paddingVertical: 5,
@@ -185,19 +184,19 @@ const styles = StyleSheet.create({
   fullBlueGap: { height: 16, width: screenWidth, backgroundColor: '#E6F0FF', alignSelf: 'center' },
 
   trackingHeader: { 
-    fontFamily: 'Poppins', // Changed from PoppinsBold
-    fontWeight: '500', // Reduced weight
+    fontFamily: 'Poppins', 
+    fontWeight: '500', 
     fontSize: 18, 
     marginVertical: 10 
   },
 
-  /* timeline */
+ 
   timelineContainer: { backgroundColor: '#fff', marginTop: 8, borderRadius: 10, padding: 16 },
   timelineRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   timelineStep: { 
     alignItems: 'center', 
-    width: 70, // Increased width to prevent text wrapping
-    minWidth: 70 // Added minimum width
+    width: 70, 
+    minWidth: 70 
   },
   outerDotted: {
     width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderStyle: 'dashed',
@@ -214,7 +213,7 @@ const styles = StyleSheet.create({
     color: '#333', 
     marginBottom: 2, 
     textAlign: 'center',
-    flexWrap: 'nowrap', // Prevent text wrapping
+    flexWrap: 'nowrap', 
   },
   timelineDate: { 
     fontFamily: 'Poppins-Regular', 
